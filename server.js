@@ -1,15 +1,18 @@
 const express = require('express');
 const app = express();
 const bcrypt = require('bcrypt');
-
-
+const session = require('express-session')
 app.set('view-engine', 'ejs');
 app.use(express.urlencoded({ extended: false}));
 
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 mongoose.connect('mongodb://localhost/registration-form')
 .then(() => console.log('Connected...'))
 .catch(err => console.error('Connection failed...'));
+
+app.use(bodyParser.json())
+
 
 const userSchema = new mongoose.Schema({
     name: String,
@@ -20,11 +23,10 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-// const users = []
 
 
 app.get('/', (req, res) => {
-    res.render('index.ejs')
+    res.render('welcome.ejs')
 });
 
 app.get('/login', (req, res) => {
@@ -32,8 +34,21 @@ app.get('/login', (req, res) => {
 });
 
 
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
+    try{
+     const user = await User.findOne({email: req.body.email});
+     if (user) {
+        if (await bcrypt.compare(req.body.password, user.password)) {
+            res.redirect('/')
+        }
+     }
+        
+    } catch {
+        console.log('error')
+    }
+    
 
+   
 });
 
 
