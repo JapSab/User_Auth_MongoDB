@@ -7,7 +7,8 @@ app.use(express.urlencoded({ extended: false}));
 
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-mongoose.connect('mongodb://localhost/registration-form')
+mongoose.connect('mongodb://localhost/registration-form') 
+// mongoose.connect('mongodb://localhost/#####')  replace with your db name
 .then(() => console.log('Connected...'))
 .catch(err => console.error('Connection failed...'));
 
